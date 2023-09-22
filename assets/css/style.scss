@@ -26,7 +26,7 @@
   }
 
   .site-title {
-    font-family: tiles2; 
+    font-family: tiles2, "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 60px; 
     color: var(--textdark);
   }
@@ -74,6 +74,8 @@
     border: 2px solid var(--bordercolor); 
     border-radius: 50px;
     margin: 20px 0px;
+    position: relative;
+    z-index: 1;
 }
 
 .project-preview img, iframe {
@@ -119,7 +121,7 @@
 }
 
 .button-56:after {
-  background-color: var(--bordercolor);
+  background-color: var(--brownaccent);
   border-radius: 8px;
   content: "";
   display: block;
@@ -138,7 +140,7 @@
 }
 
 .button-56:active {
-  background-color: var(--pinkaccent);
+  background-color: #ffc7b1;
   outline: 0;
 }
 
@@ -151,6 +153,7 @@
   .button-56 {
     padding: 0 40px;
   }
+}
 
   /* button style based on https://codepen.io/samvdh/pen/MmZzyR */
   a.button.two:before, a.button.two:after{
@@ -182,4 +185,3 @@
     opacity: 1;
   }
   
-}

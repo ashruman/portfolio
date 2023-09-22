@@ -591,7 +591,7 @@ footer {
 }
 
 .site-title {
-  font-family: tiles2;
+  font-family: tiles2, "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 60px;
   color: var(--textdark);
 }
@@ -638,6 +638,8 @@ footer {
   border: 2px solid var(--bordercolor);
   border-radius: 50px;
   margin: 20px 0px;
+  position: relative;
+  z-index: 1;
 }
 
 .project-preview img, iframe {
@@ -683,7 +685,7 @@ footer {
 }
 
 .button-56:after {
-  background-color: var(--bordercolor);
+  background-color: var(--brownaccent);
   border-radius: 8px;
   content: "";
   display: block;
@@ -702,7 +704,7 @@ footer {
 }
 
 .button-56:active {
-  background-color: var(--pinkaccent);
+  background-color: #ffc7b1;
   outline: 0;
 }
 
@@ -715,34 +717,38 @@ footer {
   .button-56 {
     padding: 0 40px;
   }
-  /* button style based on https://codepen.io/samvdh/pen/MmZzyR */
-  a.button.two:before, a.button.two:after {
-    opacity: 0;
-    transition: all 0.3s ease;
-    font-size: 20px;
-  }
-  a.button.two:before {
-    content: "[";
-  }
-  a.button.two:after {
-    content: "]";
-  }
-  a.button.two:hover:before {
-    margin-right: 10px;
-    content: "[";
-    -webkit-transform: translateX(20px);
-    -moz-transform: translateX(20px);
-    transform: translateX(20px);
-    opacity: 1;
-  }
-  a.button.two:hover:after {
-    margin-left: 10px;
-    content: "]";
-    -webkit-transform: translateX(-20px);
-    -moz-transform: translateX(-20px);
-    transform: translateX(-20px);
-    opacity: 1;
-  }
+}
+/* button style based on https://codepen.io/samvdh/pen/MmZzyR */
+a.button.two:before, a.button.two:after {
+  opacity: 0;
+  transition: all 0.3s ease;
+  font-size: 20px;
+}
+
+a.button.two:before {
+  content: "[";
+}
+
+a.button.two:after {
+  content: "]";
+}
+
+a.button.two:hover:before {
+  margin-right: 10px;
+  content: "[";
+  -webkit-transform: translateX(20px);
+  -moz-transform: translateX(20px);
+  transform: translateX(20px);
+  opacity: 1;
+}
+
+a.button.two:hover:after {
+  margin-left: 10px;
+  content: "]";
+  -webkit-transform: translateX(-20px);
+  -moz-transform: translateX(-20px);
+  transform: translateX(-20px);
+  opacity: 1;
 }
 
 /*# sourceMappingURL=style.css.map */
