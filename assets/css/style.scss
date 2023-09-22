@@ -3,30 +3,103 @@
 
 @import "{{ site.theme }}";
 
+  /* FONTS */
+
+  @font-face {
+    font-family: level;
+    src: url('./fonts/LEVEL___.TTF');
+  }
+
+  @font-face {
+    font-family: tiles2;
+    src: url('./fonts/KAZYcase-scrabble.ttf');
+  }
+
+  /* COLORS */
+  :root {
+    --textdefault: #494949;
+    --textdark: #393939;
+    --lightbg: #ffe1d7;
+    --brownaccent: #845353;
+    --pinkaccent: #d78686;
+    --bordercolor: #111;
+  }
+
+  .site-title {
+    font-family: tiles2; 
+    font-size: 60px; 
+    color: var(--textdark);
+  }
+
+  sub {
+    color: var(--brownaccent);
+  }
+
+  h3 {
+    color: var(--brownaccent);
+    font-style: italic;
+  }
+
+  p {
+    color: var(--textdefault);
+  }
+
+  a {
+    color: var(--pinkaccent);
+  }
+
+  a:hover {
+    // color: #ffc7b1;
+    color: var(--textdark);
+  }
+
+  svg {
+    width: 10%; 
+    height: auto;
+    color: var(--pinkaccent);
+    }
+
+  svg:hover {
+    color: var(--textdark);
+  }
+  
+  footer {
+    bottom: 25px;
+  }
+
 .project-preview {
     width: 500px; 
-    background-color: rgba(255, 160, 122, 0.449); 
+    background-color: var(--lightbg); 
     padding: 20px; 
-    border: 2px solid #111; 
+    border: 2px solid var(--bordercolor); 
     border-radius: 50px;
     margin: 20px 0px;
 }
 
 .project-preview img, iframe {
-    border: 2px solid #111;
+    border: 2px solid var(--bordercolor);
     border-radius: 10px;
     width: 501px;
     height: 281px;
+}
+
+.project-preview h2 {
+    margin-bottom: 10px;
+}
+
+.navlinks {
+    font-size: 20px;
+    font-weight: bold;
 }
 
 /* button style based on https://getcssscan.com/css-buttons-examples */
 .button-56 {
   align-items: center;
   background-color: #fee6e3;
-  border: 2px solid #111;
+  border: 2px solid var(--bordercolor);
   border-radius: 8px;
   box-sizing: border-box;
-  color: #393939;
+  color: var(--textdefault);
   cursor: pointer;
   display: flex;
   font-weight: bold;
@@ -46,7 +119,7 @@
 }
 
 .button-56:after {
-  background-color: #111;
+  background-color: var(--bordercolor);
   border-radius: 8px;
   content: "";
   display: block;
@@ -65,13 +138,13 @@
 }
 
 .button-56:active {
-  background-color: #ffdeda;
+  background-color: var(--pinkaccent);
   outline: 0;
 }
 
 .button-56:hover {
   outline: 0;
-  background-color: rgb(255, 190, 164);
+  background-color: #ffc7b1;
 }
 
 @media (min-width: 768px) {
@@ -79,15 +152,34 @@
     padding: 0 40px;
   }
 
-  /* FONTS */
-
-  @font-face {
-    font-family: level;
-    src: url('./fonts/LEVEL___.TTF');
+  /* button style based on https://codepen.io/samvdh/pen/MmZzyR */
+  a.button.two:before, a.button.two:after{
+    opacity: 0;
+    transition: all 0.3s ease;	
+      font-size: 20px;
   }
-
-  @font-face {
-    font-family: tiles2;
-    src: url('./fonts/KAZYcase-scrabble.ttf');
+  a.button.two:before{
+    content: '[';
   }
+  a.button.two:after{
+    content: ']';
+  }
+  
+  a.button.two:hover:before{
+    margin-right: 10px;
+    content: '[';
+    -webkit-transform: translateX(20px);
+    -moz-transform: translateX(20px);
+    transform: translateX(20px);
+    opacity: 1;
+  }
+  a.button.two:hover:after{
+    margin-left: 10px;
+    content: ']';
+    -webkit-transform: translateX(-20px);
+    -moz-transform: translateX(-20px);
+    transform: translateX(-20px);
+    opacity: 1;
+  }
+  
 }
