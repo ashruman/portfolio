@@ -17,7 +17,7 @@
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="Asher Uman’s Portfolio" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebPage","headline":"Asher Uman’s Portfolio","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"http://localhost:4000/assets/img/selfie.jpg"}},"url":"http://localhost:4000/valetbike.html"}</script>
+{"@context":"https://schema.org","@type":"WebPage","headline":"Asher Uman’s Portfolio","url":"http://localhost:4000/valetbike.html"}</script>
 <!-- End Jekyll SEO tag -->
 
     <link rel="stylesheet" href="/assets/css/style.css?v=">
@@ -41,9 +41,7 @@
       <header>
         <h1 class="site-title">Asher Uman</h1>
         
-        <!-- 
-          <img src="/assets/img/selfie.jpg" alt="Logo" style="border-radius: 25%;"/>
-         -->
+        <!--  -->
 
         <div>
             <a href="https://www.linkedin.com/in/ashruman/">
@@ -82,6 +80,58 @@
 
       <body>
     <h1 style="color:var(--brownaccent);"> >> ValetBike </h1>
+
+    <p>
+        <b>Role:</b> Backend software engineer<br>
+        <b>Tools used:</b> Ruby on Rails, MySQL, Git<br>
+        <b>Team Size:</b> 5<br>
+        <b>Timeline:</b> 8 weeks
+    </p>
+
+    <p>
+        ValetBike is a web application that simulates a bike-rental service, created from scratch as a Software Engineering course project. 
+        I was the main contributer for the user account and rental functionality.
+        This required managing and connecting multiple MySQL tables, as well as creating the relevant webpages with Ruby on Rails and HTML.
+    </p>
+
+    <p>
+        All the code and more information is available on the project <a href="https://github.com/thuntran/valetbike">Github repository</a>, and you can also view the <a href="https://valetbikergn.herokuapp.com/">live website</a>.
+    </p>
+
+    <h2>Starting a Ride</h2>
+    <p>
+        TO DO
+    </p>
+    <div class="language-ruby highlighter-rouge">
+        <div class="highlight">
+        <pre class="highlight">
+            <code>
+def update
+    @bike = Bike.find_by(identifier: params[:id])
+
+    if @bike.current_station
+    @ride = Ride.new
+    @ride.update_attribute(:start_station_id, @bike.current_station.id)
+    @ride.update_attribute(:bike_id, @bike.id)
+    @ride.update_attribute(:user_id, current_user.id)
+    @ride.update_attribute(:start_time, DateTime.now)
+    @ride.update_attribute(:identifier, Time.now.to_i)
+
+
+    @bike.update_attribute(:current_station, nil)
+    @bike.update_attribute(:current_user_id, current_user.id)
+    # take money out of account to pay for ride
+    @newBalance = current_user.balance - 2.50
+    current_user.update_attribute(:balance, @newBalance)
+    else
+    @ride = Ride.where(user_id: current_user.id).order(start_time: :desc).first
+    end
+end
+            </code>
+        </pre>
+        </div>
+    </div>
+
 </body>
 
       </section>
