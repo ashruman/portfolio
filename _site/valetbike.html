@@ -82,7 +82,7 @@
     <h1 style="color:var(--brownaccent);"> >> ValetBike </h1>
 
     <p>
-        <b>Role:</b> Backend software engineer<br>
+        <b>Role:</b> Full-stack software engineer<br>
         <b>Tools used:</b> Ruby on Rails, MySQL, Git<br>
         <b>Team Size:</b> 5<br>
         <b>Timeline:</b> 8 weeks
@@ -90,7 +90,7 @@
 
     <p>
         ValetBike is a web application that simulates a bike-rental service, created from scratch as a Software Engineering course project. 
-        I was the main contributer for the user account and rental functionality.
+        I was the main contributer for the user account and bike rental functionality.
         This required managing and connecting multiple MySQL tables, as well as creating the relevant webpages with Ruby on Rails and HTML.
     </p>
 
@@ -98,39 +98,83 @@
         All the code and more information is available on the project <a href="https://github.com/thuntran/valetbike">Github repository</a>, and you can also view the <a href="https://valetbikergn.herokuapp.com/">live website</a>.
     </p>
 
-    <h2>Starting a Ride</h2>
+    <h2>Creating the Rental System</h2>
     <p>
-        TO DO
+        The goal of ValetBike was to create a minimum viable product from scratch in 8 weeks. 
+        Additionally, no one on the team had significant experience with MySQL or Ruby on Rails prior to the start of development. 
+        One of the main challenges I faced was having to quickly figure out how to implement the basics of the bike rental system. 
+        A key aspect of this was creating and updating the rides database. 
     </p>
-    <div class="language-ruby highlighter-rouge">
-        <div class="highlight">
-        <pre class="highlight">
-            <code>
-def update
-    @bike = Bike.find_by(identifier: params[:id])
+    <img class="bordered" src="./assets/img/rentbike.png" alt="ValetBike Rent page"/>
+    <p>
+        When a logged-in user goes to the "Rent" page, they can select a station to rent a bike from,
+        bringing up another dropdown to select a bike from that station. 
+        If they access this page by selecting a bike and station from the map page, this information is autofilled for them.
+    </p>
+    <p>
+        Selecting "Start ride" will create a new row in the Rides table, 
+        storing a variety of information about the ride. 
+    </p>
 
-    if @bike.current_station
-    @ride = Ride.new
-    @ride.update_attribute(:start_station_id, @bike.current_station.id)
-    @ride.update_attribute(:bike_id, @bike.id)
-    @ride.update_attribute(:user_id, current_user.id)
-    @ride.update_attribute(:start_time, DateTime.now)
-    @ride.update_attribute(:identifier, Time.now.to_i)
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">Ride</span> <span class="o">&lt;</span> <span class="no">ApplicationRecords</span>
+    <span class="n">validates_presence_of</span>   <span class="ss">:start_station_id</span><span class="p">,</span>
+                            <span class="ss">:user_id</span><span class="p">,</span>
+                            <span class="ss">:bike_id</span><span class="p">,</span>
+                            <span class="ss">:start_time</span>
+                            <span class="ss">:identifier</span>
 
+    <span class="n">belongs_to</span> <span class="ss">:user</span><span class="p">,</span> <span class="ss">class_name: :User</span><span class="p">,</span> <span class="ss">foreign_key: :user_id</span>
+    <span class="n">belongs_to</span> <span class="ss">:bike</span><span class="p">,</span> <span class="ss">class_name: :Bike</span><span class="p">,</span> <span class="ss">foreign_key: :bike_id</span>
+    <span class="n">belongs_to</span> <span class="ss">:start_station</span><span class="p">,</span> <span class="ss">class_name: :Station</span><span class="p">,</span> <span class="ss">foreign_key: :start_station_id</span>
+    <span class="n">belongs_to</span> <span class="ss">:end_station</span><span class="p">,</span> <span class="ss">class_name: :Station</span><span class="p">,</span> <span class="ss">foreign_key: :end_station_id</span>
 
-    @bike.update_attribute(:current_station, nil)
-    @bike.update_attribute(:current_user_id, current_user.id)
-    # take money out of account to pay for ride
-    @newBalance = current_user.balance - 2.50
-    current_user.update_attribute(:balance, @newBalance)
-    else
-    @ride = Ride.where(user_id: current_user.id).order(start_time: :desc).first
-    end
-end
-            </code>
-        </pre>
-        </div>
-    </div>
+<span class="k">end</span></code></pre></figure>
+
+<p> 
+    Users are then redirected to the page below, and unable to return to the "Rent" page until they choose to end their ride, 
+    which they can do through either this page, or by accessing their ride history on the "My Account" page. 
+    Users are redirected back to this page any time they click on "Rent" in the navbar while on a ride.
+</p>
+ <img class="bordered" src="./assets/img/onride.png" alt="ValetBike Ride page"/>
+ <figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"> <span class="k">if</span> <span class="o">!</span><span class="vi">@mostRecentRide</span><span class="p">.</span><span class="nf">end_time</span>
+    <span class="vi">@chosenBike</span> <span class="o">=</span> <span class="no">Bike</span><span class="p">.</span><span class="nf">find_by</span><span class="p">(</span><span class="ss">id: </span><span class="vi">@mostRecentRide</span><span class="p">.</span><span class="nf">bike_id</span><span class="p">)</span>
+    <span class="n">redirect_to</span> <span class="ss">action: </span><span class="s2">"update"</span><span class="p">,</span> <span class="ss">id: </span><span class="vi">@chosenBike</span><span class="p">.</span><span class="nf">identifier</span>
+    <span class="n">flash</span><span class="p">[</span><span class="ss">:alert</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"You can only rent one bike at a time! Please end your current ride before starting a new one."</span>
+<span class="k">end</span>
+ </code></pre></figure>
+
+ <p>
+    Ending a ride passes the rides identifier* to the <b>edit</b> method, 
+    and brings up the "End Ride" page, prompting the user to choose a station to return their rental bike to.
+ </p>
+<img class="bordered" src="./assets/img/endride.png" alt="ValetBike Ride page"/>
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">edit</span>
+    <span class="c1"># the ride is accessed through both filtering for rides from the current user and finding the ride identifier</span>
+    <span class="vi">@ride</span> <span class="o">=</span> <span class="no">Ride</span><span class="p">.</span><span class="nf">where</span><span class="p">(</span><span class="ss">user_id: </span><span class="n">current_user</span><span class="p">.</span><span class="nf">id</span><span class="p">).</span><span class="nf">find_by</span><span class="p">(</span><span class="ss">identifier: </span><span class="n">params</span><span class="p">[</span><span class="ss">:id</span><span class="p">])</span>
+    <span class="vi">@bike</span> <span class="o">=</span> <span class="no">Bike</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="vi">@ride</span><span class="p">.</span><span class="nf">bike_id</span><span class="p">)</span>
+    <span class="vi">@stations</span> <span class="o">=</span> <span class="no">Station</span><span class="p">.</span><span class="nf">all</span><span class="p">.</span><span class="nf">order</span><span class="p">(</span><span class="ss">identifier: :asc</span><span class="p">)</span>
+    <span class="c1"># updates ride attributes once a station has been selected (and if the ride has not already been ended)</span>
+    <span class="k">if</span> <span class="n">params</span><span class="p">[</span><span class="ss">:station</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="vi">@ride</span><span class="p">.</span><span class="nf">end_station_id</span>
+        <span class="vi">@chosenStation</span> <span class="o">=</span> <span class="no">Station</span><span class="p">.</span><span class="nf">find_by</span><span class="p">(</span><span class="ss">name: </span><span class="n">params</span><span class="p">[</span><span class="ss">:station</span><span class="p">])</span>
+        <span class="k">if</span> <span class="vi">@chosenStation</span><span class="p">.</span><span class="nf">docked_bikes</span><span class="p">.</span><span class="nf">count</span> <span class="o">&gt;=</span> <span class="vi">@chosenStation</span><span class="p">.</span><span class="nf">dock_count</span>
+            <span class="n">flash</span><span class="p">[</span><span class="ss">:alert</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"This station is full!"</span>
+            <span class="n">params</span><span class="p">.</span><span class="nf">delete</span> <span class="ss">:station</span>
+        <span class="k">else</span>
+            <span class="vi">@ride</span><span class="p">.</span><span class="nf">update_attribute</span><span class="p">(</span><span class="ss">:end_station_id</span><span class="p">,</span> <span class="vi">@chosenStation</span><span class="p">.</span><span class="nf">id</span><span class="p">)</span>
+            <span class="vi">@ride</span><span class="p">.</span><span class="nf">update_attribute</span><span class="p">(</span><span class="ss">:end_time</span><span class="p">,</span> <span class="no">DateTime</span><span class="p">.</span><span class="nf">now</span><span class="p">)</span>
+            <span class="vi">@bike</span><span class="p">.</span><span class="nf">update_attribute</span><span class="p">(</span><span class="ss">:current_station</span><span class="p">,</span> <span class="vi">@chosenStation</span><span class="p">)</span>
+            <span class="vi">@bike</span><span class="p">.</span><span class="nf">update_attribute</span><span class="p">(</span><span class="ss">:current_user_id</span><span class="p">,</span> <span class="kp">nil</span><span class="p">)</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+    <span class="c1"># renders a view that displays some ride data and thanks the user for using the service</span>
+    <span class="n">render</span> <span class="s1">'endride'</span>
+<span class="k">end</span></code></pre></figure>
+<p>
+    <small>
+        *To avoid exposing or depending on the auto-incremented ID of the database, rides are given another identifier based on the time they are started.
+        This has a small chance of creating multiple rides with the same identifier, but is still preferable to using the database ID, since any rides that share an identifier would belong to different users.
+    </small>
+</p>
 
 </body>
 

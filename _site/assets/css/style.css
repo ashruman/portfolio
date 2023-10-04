@@ -650,6 +650,11 @@ footer {
   z-index: 1;
 }
 
+.bordered {
+  border: 2px solid var(--bordercolor);
+  border-radius: 30px;
+}
+
 .project-preview img, iframe {
   border: 2px solid var(--bordercolor);
   border-radius: 10px;
@@ -664,6 +669,47 @@ footer {
 .navlinks {
   font-size: 20px;
   font-weight: bold;
+}
+
+/* CODE STYLING */
+.highlight {
+  margin: 5px;
+}
+
+pre {
+  padding: 8px 15px;
+  background: var(--textdark);
+  border-radius: 5px;
+  border: 1px solid #e5e5e5;
+  overflow-x: auto;
+}
+
+.highlight .k {
+  color: #8a7672;
+}
+
+.highlight .nf, .highlight .nc {
+  color: var(--pinkaccent);
+}
+
+.highlight .o, .highlight .n, .highlight .p, .highlight .mf {
+  color: rgb(179, 179, 179);
+}
+
+.highlight .no, .highlight .vi {
+  color: var(--lightbg);
+}
+
+.highlight .c1 {
+  color: rgb(122, 122, 122);
+}
+
+.highlight .ss {
+  color: var(--brownaccent);
+}
+
+.highlight .kp, .highlight .s1, .highlight .s2 {
+  color: white;
 }
 
 /* button style based on https://getcssscan.com/css-buttons-examples */

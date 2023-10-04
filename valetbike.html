@@ -5,7 +5,7 @@ layout: default
     <h1 style="color:var(--brownaccent);"> >> ValetBike </h1>
 
     <p>
-        <b>Role:</b> Backend software engineer<br>
+        <b>Role:</b> Full-stack software engineer<br>
         <b>Tools used:</b> Ruby on Rails, MySQL, Git<br>
         <b>Team Size:</b> 5<br>
         <b>Timeline:</b> 8 weeks
@@ -13,7 +13,7 @@ layout: default
 
     <p>
         ValetBike is a web application that simulates a bike-rental service, created from scratch as a Software Engineering course project. 
-        I was the main contributer for the user account and rental functionality.
+        I was the main contributer for the user account and bike rental functionality.
         This required managing and connecting multiple MySQL tables, as well as creating the relevant webpages with Ruby on Rails and HTML.
     </p>
 
@@ -21,38 +21,87 @@ layout: default
         All the code and more information is available on the project <a href="https://github.com/thuntran/valetbike">Github repository</a>, and you can also view the <a href="https://valetbikergn.herokuapp.com/">live website</a>.
     </p>
 
-    <h2>Starting a Ride</h2>
+    <h2>Creating the Rental System</h2>
     <p>
-        TO DO
+        The goal of ValetBike was to create a minimum viable product from scratch in 8 weeks. 
+        Additionally, no one on the team had significant experience with MySQL or Ruby on Rails prior to the start of development. 
+        One of the main challenges I faced was having to quickly figure out how to implement the basics of the bike rental system. 
+        A key aspect of this was creating and updating the rides database. 
     </p>
-    <div class="language-ruby highlighter-rouge">
-        <div class="highlight">
-        <pre class="highlight">
-            <code>
-def update
-    @bike = Bike.find_by(identifier: params[:id])
+    <img class="bordered" src="./assets/img/rentbike.png" alt="ValetBike Rent page"/>
+    <p>
+        When a logged-in user goes to the "Rent" page, they can select a station to rent a bike from,
+        bringing up another dropdown to select a bike from that station. 
+        If they access this page by selecting a bike and station from the map page, this information is autofilled for them.
+    </p>
+    <p>
+        Selecting "Start ride" will create a new row in the Rides table, 
+        storing a variety of information about the ride. 
+    </p>
 
-    if @bike.current_station
-    @ride = Ride.new
-    @ride.update_attribute(:start_station_id, @bike.current_station.id)
-    @ride.update_attribute(:bike_id, @bike.id)
-    @ride.update_attribute(:user_id, current_user.id)
-    @ride.update_attribute(:start_time, DateTime.now)
-    @ride.update_attribute(:identifier, Time.now.to_i)
+{% highlight ruby %}
+class Ride < ApplicationRecords
+    validates_presence_of   :start_station_id,
+                            :user_id,
+                            :bike_id,
+                            :start_time
+                            :identifier
 
+    belongs_to :user, class_name: :User, foreign_key: :user_id
+    belongs_to :bike, class_name: :Bike, foreign_key: :bike_id
+    belongs_to :start_station, class_name: :Station, foreign_key: :start_station_id
+    belongs_to :end_station, class_name: :Station, foreign_key: :end_station_id
 
-    @bike.update_attribute(:current_station, nil)
-    @bike.update_attribute(:current_user_id, current_user.id)
-    # take money out of account to pay for ride
-    @newBalance = current_user.balance - 2.50
-    current_user.update_attribute(:balance, @newBalance)
-    else
-    @ride = Ride.where(user_id: current_user.id).order(start_time: :desc).first
-    end
 end
-            </code>
-        </pre>
-        </div>
-    </div>
+{% endhighlight %}
+
+<p> 
+    Users are then redirected to the page below, and unable to return to the "Rent" page until they choose to end their ride, 
+    which they can do through either this page, or by accessing their ride history on the "My Account" page. 
+    Users are redirected back to this page any time they click on "Rent" in the navbar while on a ride.
+</p>
+ <img class="bordered" src="./assets/img/onride.png" alt="ValetBike Ride page"/>
+ {% highlight ruby %}
+ if !@mostRecentRide.end_time
+    @chosenBike = Bike.find_by(id: @mostRecentRide.bike_id)
+    redirect_to action: "update", id: @chosenBike.identifier
+    flash[:alert] = "You can only rent one bike at a time! Please end your current ride before starting a new one."
+end
+ {% endhighlight %}
+
+ <p>
+    Ending a ride passes the rides identifier* to the <b>edit</b> method, 
+    and brings up the "End Ride" page, prompting the user to choose a station to return their rental bike to.
+ </p>
+<img class="bordered" src="./assets/img/endride.png" alt="ValetBike Ride page"/>
+{% highlight ruby %}
+def edit
+    # the ride is accessed through both filtering for rides from the current user and finding the ride identifier
+    @ride = Ride.where(user_id: current_user.id).find_by(identifier: params[:id])
+    @bike = Bike.find(@ride.bike_id)
+    @stations = Station.all.order(identifier: :asc)
+    # updates ride attributes once a station has been selected (and if the ride has not already been ended)
+    if params[:station] && !@ride.end_station_id
+        @chosenStation = Station.find_by(name: params[:station])
+        if @chosenStation.docked_bikes.count >= @chosenStation.dock_count
+            flash[:alert] = "This station is full!"
+            params.delete :station
+        else
+            @ride.update_attribute(:end_station_id, @chosenStation.id)
+            @ride.update_attribute(:end_time, DateTime.now)
+            @bike.update_attribute(:current_station, @chosenStation)
+            @bike.update_attribute(:current_user_id, nil)
+        end
+    end
+    # renders a view that displays some ride data and thanks the user for using the service
+    render 'endride'
+end
+{% endhighlight %}
+<p>
+    <small>
+        *To avoid exposing or depending on the auto-incremented ID of the database, rides are given another identifier based on the time they are started.
+        This has a small chance of creating multiple rides with the same identifier, but is still preferable to using the database ID, since any rides that share an identifier would belong to different users.
+    </small>
+</p>
 
 </body>
